@@ -87,7 +87,7 @@ void print_board(int n, int m, char board[n][m], int flag)
     for (int i = 0; i < m; i++)
     {
         printf("|");
-        if (flag) //Mostra tudo
+        if (flag==0) //Mostra tudo
         {
             for (int j = 0; j < n; j++)
             {
@@ -127,28 +127,27 @@ void print_board(int n, int m, char board[n][m], int flag)
  **/
 int typeToSize(char type)
 {
-    int tamanho=-1;
-    int *t=&tamanho;
+    int tamanho;
     switch (type)
     {
     case 'P':
-        *t=5;
+        tamanho=5;
         break;
     case 'N':
-        *t=4;
+        tamanho=4;
         break;
     case 'C':
-        *t=3;
+        tamanho=3;
         break;
     case 'S':
-        *t=2;
+        tamanho=2;
         break;    
     default:
-        *t=-1;
+        tamanho=-1;
         break;
     }
 
-    return *t;
+    return tamanho;
 }
 
 /**
@@ -173,22 +172,21 @@ int typeToSize(char type)
  **/
 void init_boat(Boat *b, char type, Position xy, char dir)
 {
-    b->afloat=1;
-    b->tSize=typeToSize(type);
+    b->afloat=typeToSize(type);
+    b->tSize=b->afloat;
     for(int i=0; i<typeToSize(type); i++){
         b->coord[i].afloat=1;
 
-        if(dir=='H'){
-        b->coord[i].pos.x+=i;
-        b->coord[i].pos.y=0;
+        if(dir=='V'){
+        b->coord[i].pos.x=xy.x+i;
+        b->coord[i].pos.y=xy.y;
         }
         else{
-        b->coord[i].pos.x=0;
-        b->coord[i].pos.y+=i;
+        b->coord[i].pos.x=xy.x;
+        b->coord[i].pos.y=xy.y+i;
 
         }
     }
-
 }
 
 
@@ -196,11 +194,12 @@ void init_boat(Boat *b, char type, Position xy, char dir)
 int check_free(int n, int m, Boat *boat, char board[n][m])
 {
    int k=1;
-   for (int l=0; l<5; l++){
+   int *p=&k;
+   for (int l=0; l<boat->tSize; l++){
         for (int i=0; i<n; i++){
             for (int j=0; j<m; m++){
                 if(boat->coord[l].pos.x==i && boat->coord[l].pos.y==j && board[i][j]!=' '){
-                    k=0;
+                    *p=0;
                 }
             }
         }
@@ -229,32 +228,72 @@ int check_free(int n, int m, Boat *boat, char board[n][m])
 int place_boat(int x1, int y1, int dir, char type, Board *board)
 {
     int w=-1;
+    int *q=&w;
     for (int i=0; i<N; i++){
-        if (board->boats->coord->pos.x==i){
+        for(int j=0; j<M; j++){
+            for(int l=0; l<typeToSize(type); l++){
+        if (x1==i && y1==j){
+            if(dir=='H'){
+                if(x1+l<M){
+                    *q=-1;
+                }
+                else{
+                    *q=-2;
+                }
+            }
+            else{
+                if(y1+l<N){
+                    *q=-1;
+                }
+                else{
+                    *q=-2;
+                }
+            }
+            
             break;
         }
         else{
-            w=-2;
+            *q=-2;
+        }
+        }
         }
     }
-    for (int j=0; j<M; j++){
-        if (board->boats->coord->pos.y==j){
-            break;
-        }
-        else{
-            w=-2;
-        }
-    }
+    if(*q!=-2){
+
     if (dir != 'H' || dir != 'V'){
-        w=-3;
+        *q=-3;
     }
-    else if(type!='P' || type!='C' || type!='N' || type!='S'){
-        w=-4;
+        if(*q!=-3){
+        if(type!='P' || type!='C' || type!='N' || type!='S'){
+        *q=-4;
     }
-    else if(check_free(x1, y1, board->boats, board->board)==0){
-        for(int i=0; i<) //acabar isto
-        w=0;
+    if(*q!=-4){
+
+    board->numBoatsAfloat=0;
+    board->boats[board->numBoats].coord->pos.x=x1;
+    board->boats[board->numBoats].coord->pos.y=y1;
+
+
+    init_boat(board->boats+(board->numBoats), type, board->boats[board->numBoats].coord->pos, dir);
+    if(check_free(N, M, board->boats+(board->numBoats), board->board)==1){
+        for(int e=0; e<typeToSize(type);e++){
+            if(dir=='H'){
+            board->board[x1][y1+e]=type;
+            }
+            else{
+                board->board[x1+e][y1]=type;
+            }
+        }
+        board->numBoats++;
+        *q=0;
     }
+    else{
+        *q=-1;
+    }
+    }
+    }
+    }
+
     return w;
 }
 
@@ -275,13 +314,14 @@ int place_boat(int x1, int y1, int dir, char type, Board *board)
  **/
 char check_sink(int x, int y, Board *board)
 {
-    char l;
+    char d;
+    char *l=&d;
     for (int i=0; i<N; i++){
         if (board->boats->coord->pos.x==i){
             break;
         }
         else{
-            l='I';
+            *l='I';
         }
     }
     for (int j=0; j<M; j++){
@@ -289,24 +329,29 @@ char check_sink(int x, int y, Board *board)
             break;
         }
         else{
-            l='I';
+            *l='I';
         }
     }
-    if(l!='I'){
+    if(*l!='I'){
         for(int i=0; i<B; i++){
             for(int j=0; j<typeToSize(board->boats[i].type); j++){
-                if(board->boats[i].coord[j].afloat == 1){
-                    l='F';
-                    break;
-                    }
-                else{
-                    continue;
+                if(board->boats[i].coord[j].pos.x==x && board->boats[i].coord[j].pos.y==y){
+                    board->boats[i].coord[j].afloat=0;
+                    board->boats[i].afloat--;
+                    *l=board->boats[i].type;
                 }
-            }
+                else{
+                    *l='F';
+                }
+
+
+        
+    }
     }
     }
 
-    return l;
+    return d;
+
 }
 
 /**
