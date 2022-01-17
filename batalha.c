@@ -1,11 +1,13 @@
 /**
  * @autores:
- * Nome: Artur Putyato      Número de Aluno: 47948
- * Nome: Alexandre Nunes    Número de Aluno: 48267
- * Nome: David Quadrado     Número de Aluno: 48188
+ * Nome: Artur Putyato      Número de Aluno:
+ * Nome:                    Número de Aluno:
+ * Nome:                    Número de Aluno:
  **/ 
 
 #include <stdio.h>
+
+
 
 #define B 6
 #define N 8
@@ -87,7 +89,7 @@ void print_board(int n, int m, char board[n][m], int flag)
     for (int i = 0; i < m; i++)
     {
         printf("|");
-        if (flag==0) //Mostra tudo
+        if (flag==1) //Mostra tudo
         {
             for (int j = 0; j < n; j++)
             {
@@ -174,6 +176,7 @@ void init_boat(Boat *b, char type, Position xy, char dir)
 {
     b->afloat=typeToSize(type);
     b->tSize=b->afloat;
+    b->type=type;
     for(int i=0; i<typeToSize(type); i++){
         b->coord[i].afloat=1;
 
@@ -227,7 +230,7 @@ int check_free(int n, int m, Boat *boat, char board[n][m])
  **/
 int place_boat(int x1, int y1, int dir, char type, Board *board)
 {
-    int w=-1;
+    int w;
     int *q=&w;
     for (int i=0; i<N; i++){
         for(int j=0; j<M; j++){
@@ -235,7 +238,7 @@ int place_boat(int x1, int y1, int dir, char type, Board *board)
         if (x1==i && y1==j){
             if(dir=='H'){
                 if(x1+l<M){
-                    *q=-1;
+                    
                 }
                 else{
                     *q=-2;
@@ -243,7 +246,7 @@ int place_boat(int x1, int y1, int dir, char type, Board *board)
             }
             else{
                 if(y1+l<N){
-                    *q=-1;
+                    
                 }
                 else{
                     *q=-2;
@@ -269,7 +272,6 @@ int place_boat(int x1, int y1, int dir, char type, Board *board)
     }
     if(*q!=-4){
 
-    board->numBoatsAfloat=0;
     board->boats[board->numBoats].coord->pos.x=x1;
     board->boats[board->numBoats].coord->pos.y=y1;
 
@@ -316,36 +318,32 @@ char check_sink(int x, int y, Board *board)
 {
     char d;
     char *l=&d;
-    for (int i=0; i<N; i++){
-        if (board->boats->coord->pos.x==i){
-            break;
-        }
-        else{
-            *l='I';
-        }
-    }
-    for (int j=0; j<M; j++){
-        if (board->boats->coord->pos.y==j){
-            break;
-        }
-        else{
-            *l='I';
+    for(int m=0; m<N; m++){
+        for(int n=0; n<M; n++){
+            if(x==m && y==n){
+                *l='K';
+                break;
+            }
+            else{
+                *l='I';
+            }
         }
     }
-    if(*l!='I'){
+    if(*l='K'){
         for(int i=0; i<B; i++){
             for(int j=0; j<typeToSize(board->boats[i].type); j++){
-                if(board->boats[i].coord[j].pos.x==x && board->boats[i].coord[j].pos.y==y){
+                if(board->boats[i].afloat==1 && board->boats[i].coord[j].pos.x==x && board->boats[i].coord[j].pos.y==y){
                     board->boats[i].coord[j].afloat=0;
                     board->boats[i].afloat--;
                     *l=board->boats[i].type;
+                    for(int k=0; k<typeToSize(board->boats[i].type); k++){
+                        board->board[board->boats[i].coord[k].pos.x][board->boats[i].coord[k].pos.y]='A';
+                    }
+                        break;
                 }
                 else{
                     *l='F';
-                }
-
-
-        
+                }        
     }
     }
     }
@@ -377,23 +375,65 @@ char check_sink(int x, int y, Board *board)
  **/
 int target(int x, int y, Board *board)
 {
-    //Implementar
+    int a;
+    int *z=&a;
+    char type;
+    if(check_sink(x, y, board)=='I'){
+        *z=-2;
+    }
+    else if(check_sink(x, y, board)=='F'){
+        for(int i=0; i<B; i++){
+            for(int j=0; j<typeToSize(board->boats[i].type); j++){
+                if(board->boats[i].coord[j].pos.x==x && board->boats[i].coord[j].pos.y==y){
+                    board->boats[i].coord[j].afloat=0;
+                    board->boats[i].afloat--;
+                    for(int k=0; k<typeToSize(board->boats[i].type); k++){
+                        board->board[board->boats[i].coord[k].pos.x][board->boats[i].coord[k].pos.y]='*';
+                    }
+                    *z=1;
+                        break;
+                }
+                else{
+                    *z=-1;
+                }
+            }
+        }
+        *z=-1;
+    }
+    else if(check_sink(x,y, board)=='P' || check_sink(x,y, board)=='N' || check_sink(x,y, board)=='C' || check_sink(x,y, board)=='S'){
+        type=check_sink(x, y, board);
+        *z=typeToSize(type);
+    }
+    else{
+        *z=0;
+    }
 
-    return -3;
+    return a;
 }
 
-//int colocaNavio()
+
 int main(void)
 {
 
     Board brd;
+    char player1[50];
+    char player2[50];
+    printf("Bem-vindos ao Battleship! \n \n");
+    printf("Indique o nome do primeiro jogador: ");
+    fgets (player1, 50, stdin);
+    printf("Indique o nome do segundo jogador: ");
+    fgets (player2, 50, stdin);
+
+    
     init_board(N, M, &brd);
     print_board(N, M, brd.board, 0);
     
     /**Exemplo de uso da print_board e da place_boat**/
     /**Precisa de as implementar primeiro**/
     //print_board(N, M, brd.board, 0);
-    //place_boat(1,3, 'H', 'P', &brd);
+    place_boat(1,3, 'H', 'P', &brd);
+
+
     //print_board(N, M, brd.board, 1);
     
     
