@@ -2,7 +2,7 @@ compilador=gcc
 SOURCEFILES = $(wildcard *.c)
 OBJECTS = $(SOURCEFILES: %.c=%.o)
 main_execute = main.exe
-.PHONY: all clean execute
+.PHONY: all clean execute test
 
 all: execute
 execute : main.exe
@@ -19,6 +19,8 @@ perfilagem: $(OBJECTS)
 	./main.exe
 	gprof main.exe gmon.out 
 	cat gmon.out
+test: $(OBJECTS)
+	gcc -o demo batalha.c -Wall -std=c99
 
 clean :
 	rm *.o
