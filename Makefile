@@ -14,5 +14,11 @@ main.exe : $(OBJECTS)
 %.o : %.c
 	$(compilador) -c $<
 
+perfilagem: $(OBJECTS)
+	$(compilador) -o $@ $^ -pg
+	./main.exe
+	gprof main.exe gmon.out 
+	cat gmon.out
+
 clean :
 	rm *.o
