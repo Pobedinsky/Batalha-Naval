@@ -21,6 +21,7 @@ perfilagem: $(OBJECTS)
 	cat gmon.out
 test: $(OBJECTS)
 	gcc -o demo batalha.c -Wall -std=c99
+	rm demo
 
 clean :
 	rm *.o
