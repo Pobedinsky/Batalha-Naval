@@ -752,7 +752,6 @@ int main(void)
 
     }
 
-    printf("\e[1;1H\e[2J"); //permite apagar o terminal para o atacante não ver as posições do defensor
     
     printf("\n%s já adicionou todos os barcos correctamente! Agora o %s irá tentar afundá-los!\n\n", player1, player2); 
     printf(" ___________________________________________________\n");
@@ -770,8 +769,10 @@ int main(void)
         do{
     printf("\nIndique as coordenadas a atacar. Caso queira acabar o jogo, escreva -1:\n");
     printf("%s tem %d jogadas restantes.\n", player2, 40-jogadas); //jogadas inicialmente são 0
+    newx: //permite re-perguntar o x
     printf("x: "); //pede-se o x
     scanf("%d", &x);
+    
     if(x==-1){ //verifica se o utilizador quiser saír
         goto ask;
     }
@@ -780,9 +781,9 @@ int main(void)
         printf("Mas podes continuar a jogar.\n");
         cheat++; //flag cheat incrementa
         print_board(N, M, brd.board, 1);
-        printf("x: ");
-        scanf("%d", &x);
+        goto newx;
     }
+    newy: //permite re-perguntar o y
     printf("y: ");
     scanf("%d", &y);
     printf("\n");
@@ -794,6 +795,7 @@ int main(void)
         printf("Mas podes continuar a jogar.\n");
         cheat++;
         print_board(N, M, brd.board, 1);
+        goto newy;
     }
 
     printf("\n-----------------------------------------------------------------------------------------------------\n\n");
