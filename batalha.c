@@ -594,8 +594,7 @@ int main(void)
     do{
         do{
 
-    printf("%s, indique o tipo do %dº navio que pretende colocar (Caso queira abortar o jogo, indique Q):\t",player1, i+1);
-    printf("\nTIPOS: S, P, N, C\n");
+    printf("\n%s, indique o tipo do %dº navio que pretende colocar (Caso queira abortar o jogo, indique Q):\t",player1, i+1);
     scanf(" %c", &brd.boats[i].type);
     
     if(brd.boats[i].type=='C'){
@@ -660,7 +659,7 @@ int main(void)
     }
     
     do{
-    printf("_____________________________________________________________________________\n\n");
+    printf("\n-----------------------------------------------------------------------------------------------------\n\n");
     printf("Prima 1 para orientação Horizontal e 0 para orientação vertical:\t");
     printf("\nPara Abortar o jogo imprime -1 a qualquer momento\n\n");
 
@@ -701,19 +700,20 @@ int main(void)
 
     }
     }
-    printf(" ______________________________________________________________________\n");
-    printf("|                                                                      |\n");
-    printf("|  %d-Submarinos %d-Contratorpedeiros %d-Navio-tanque %d-Porta-Aviões      |\n", submarinos, contratorpedeiros, naviotanque,portavioes);
-    printf("|______________________________________________________________________|\n");
+    printf("\n-----------------------------------------------------------------------------------------------------\n\n");
+    print_board(N, M, brd.board, 1);
+    printf(" __________________________________________________________________________________\n");
+    printf("|                                                                                  |\n");
+    printf("|  %d-Submarinos(S) %d-Contratorpedeiros(C) %d-Navio-tanque(N) %d-Porta-Aviões(P)      |\n", submarinos, contratorpedeiros, naviotanque,portavioes);
+    printf("|__________________________________________________________________________________|\n\n");
 
-    }while(a!=0 && quit=='0');
+    }while(a!=0);
 
     
-    print_board(N, M, brd.board, 1);
+    
     init_board(N, M, &jogo);
 
     }
-    if(quit=='0'){
     puts( "\x1b[2J\x1b[1;1H");
     puts( "\x1b[2J\x1b[1;1H");
     puts( "\x1b[2J\x1b[1;1H");
@@ -742,6 +742,8 @@ int main(void)
         printf("%s perdeste :(\n", player2);
         cheat++;
         print_board(N, M, brd.board, 1);
+        printf("x: ");
+        scanf("%d", &x);
     }
     printf("y: ");
     scanf("%d", &y);
@@ -855,7 +857,6 @@ int main(void)
 
     }
     
-    }
     printf("Quer jogar mais uma ronda? Sim (S) ou N(não):\n");
     scanf(" %c", &ngame);
     }while(ngame=='S');
