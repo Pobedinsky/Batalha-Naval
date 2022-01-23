@@ -594,8 +594,8 @@ int main(void)
     do{
         do{
 
-    printf("%s, indique o tipo do %dº navio que pretende colocar:\t",player1, i+1);
-    printf("\nCaso queira abortar o jogo, indique Q\n\n");
+    printf("%s, indique o tipo do %dº navio que pretende colocar (Caso queira abortar o jogo, indique Q):\t",player1, i+1);
+    printf("\nTIPOS: S, P, N, C\n");
     scanf(" %c", &brd.boats[i].type);
     
     if(brd.boats[i].type=='C'){
@@ -646,8 +646,8 @@ int main(void)
         goto ask;
     }
 
-    printf("Indique as coordenadas da primeira posição:\n");
-    printf("\nPara Abortar o jogo imprime -1 a qualquer momento\n\n");
+    printf("Indique as coordenadas da primeira posição (para Abortar o jogo imprime -1 a qualquer momento):\n");
+
     printf("x: ");
     scanf(" %d", &x);
     if(x==-1){
@@ -660,6 +660,7 @@ int main(void)
     }
     
     do{
+    printf("_____________________________________________________________________________\n\n");
     printf("Prima 1 para orientação Horizontal e 0 para orientação vertical:\t");
     printf("\nPara Abortar o jogo imprime -1 a qualquer momento\n\n");
 
@@ -721,10 +722,10 @@ int main(void)
     printf("|                                                   |\n");
     printf("|                MENÚ DE OPÇÕES                     |\n");
     printf("|                                                   |\n");
-    printf("|    1) Imprima -1 para saír do jogo                |\n");
+    printf("|    1) Imprima -1 para saír do jogo;               |\n");
     printf("|    2) Para imprimir o tabuleiro com os barcos,    |\n");
     printf("|    imprima -2. AVISO, CASO SEJA UTILIZADO-PERDE   |\n");
-    printf("|    , contudo o jogo continua                      |\n");
+    printf("|    , contudo o jogo continua;                     |\n");
     printf("|___________________________________________________|\n\n");
     printf("%s, o terminal pertence agora a %s!\n\n", player1, player2);
     print_board(N, M, jogo.board, 1);
@@ -744,6 +745,7 @@ int main(void)
     }
     printf("y: ");
     scanf("%d", &y);
+    printf("\n");
     if(y==-1){
         goto ask;
     }
