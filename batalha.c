@@ -6,6 +6,7 @@
  **/ 
 
 #include <stdio.h>
+#include <string.h>
 
 
 #define B 6
@@ -191,7 +192,7 @@ void init_boat(Boat *b, char type, Position xy, char dir)
 
 
 
-int check_free(int n, int m, Boat *boat, char board[N][M])
+int check_free(int n, int m, Boat *boat, char board[n][m])
 {
    int k=1;
    int *p=&k;
@@ -201,7 +202,7 @@ int check_free(int n, int m, Boat *boat, char board[N][M])
        }
        else{
         for(int i=0; i<typeToSize(boat->type); i++){
-           if(board[n][m+i]!=' '){
+           if(board[boat->coord[0].pos.x][boat->coord[0].pos.y+i]!=' '){
                *p=0;
                break;
            }
@@ -218,7 +219,7 @@ int check_free(int n, int m, Boat *boat, char board[N][M])
         }
         else{
         for(int i=0; i<typeToSize(boat->type); i++){
-           if(board[n+i][m]!=' '){
+           if(board[boat->coord[0].pos.x+i][boat->coord[0].pos.y]!=' '){
                *p=0;
                break;
            }
@@ -294,7 +295,7 @@ int place_boat(int x1, int y1, int dir, char type, Board *board)
 
 
     init_boat(board->boats+a, type, board->boats[a].coord->pos, dir);
-    if((check_free(x1, y1, board->boats+(a), board->board)==1)){
+    if((check_free(N, M, board->boats+(a), board->board)==1)){
         for(int e=0; e<b;e++){
             if(dir=='H'){
             board->board[x1][y1+e]=type;
@@ -407,7 +408,6 @@ int target(int x, int y, Board *board)
 {
     int a;
     int *z=&a;
-    char type;
     int flag=0;
     if(check_sink(x, y, board)=='I'){
         *z=-2;
@@ -476,18 +476,41 @@ int main(void)
     int verificaquantidade;
     char player1[50];
     char player2[50];
-    int jogadas=0;
+    int jogadas;
     char dir[6];
-    int contratorpedeiros=2;
-    int naviotanque=1;
-    int portavioes=1;
-    int submarinos=2;
+    int contratorpedeiros;
+    int naviotanque;
+    int portavioes;
+    int submarinos;
     int ataque;
+    char quit;
+    char rein;
+    char ngame='K'; //ok
+    int score1=0;
+    int score2=0;
+    char intermed[50];
+    int intermedscore;
+    repeat:
+        quit='0';
+        rein='S';
+    
+    
 
     printf("Bem-vindos ao Battleship! \n \n");
 
-    
+    printf("Indique o nome do primeiro jogador: ");
+    scanf("%s", player1);
 
+    printf("Indique o nome do segundo jogador: ");
+    scanf("%s", player2);
+
+    do{
+        contratorpedeiros=2;
+        naviotanque=1;
+        portavioes=1;
+        submarinos=2;
+        jogadas=0;
+        ngame='K';
     printf(" _____________________________________________________________________\n");
     printf("|                                                                     |\n");
     printf("|         __   __    _____   _     _  _     _   _____   _             |\n");
@@ -516,11 +539,18 @@ int main(void)
     printf("|          a) Inserir o nome dos jogadores                            |\n");
     printf("|                                                                     |\n");
     printf("|_____________________________________________________________________|\n");
+    
 
-    printf("Indique o nome do primeiro jogador: ");
-    fgets (player1, 50, stdin);
-    printf("Indique o nome do segundo jogador: ");
-    fgets (player2, 50, stdin);
+
+    if(ngame=='S'){
+    strcpy(intermed, player1);
+    strcpy(player1, player2);
+    strcpy(player2, intermed);
+    intermedscore=score1;
+    score1=score2;
+    score2=intermedscore;
+    }
+    
 
     init_board(N, M, &brd);
     print_board(N, M, brd.board, 0);
@@ -530,6 +560,7 @@ int main(void)
 
     printf("Indique o tipo do %dº navio que pretende colocar:\t", i+1);
     scanf(" %c", &brd.boats[i].type);
+    
     if(brd.boats[i].type=='C'){
         verificaquantidade=contratorpedeiros;
     }
@@ -547,10 +578,38 @@ int main(void)
     if (verificaquantidade==0){
         printf("\n Escolha outro tipo de barco, pois usou todos os barcos que podia deste tipo!\n\n");
     }
-        }while(verificaquantidade==0);
+    if(brd.boats[i].type=='C'){
+        contratorpedeiros--;
+    }
+    else if(brd.boats[i].type=='P'){
+
+        portavioes--;
+
+    }
+    else if(brd.boats[i].type=='S'){
+
+        submarinos--;
+
+    }
+    else if(brd.boats[i].type=='N'){
+
+        naviotanque--;
+
+    }
+    else if(brd.boats[i].type=='Q'){
+        quit='Q';
+    }
+
+        }while((verificaquantidade==0 || (brd.boats[i].type!='C' && brd.boats[i].type!='P' && brd.boats[i].type!='N' && brd.boats[i].type!='S')) && quit=='0');
+    if(quit=='Q'){
+        printf("Quer recomeçar o jogo? S(sim) ou N(não):\n");
+        scanf(" %c", &rein);
+        if(rein=='S')goto repeat;
+        else goto sair;
+    }
+
     printf("Indique as coordenadas da primeira posição:\t");
     scanf(" %d", &x);
-    printf("PORRA, MAIS\n");
     scanf(" %d", &y);
     
     do{
@@ -570,57 +629,84 @@ int main(void)
 
     if(a!=0){
         printf("\n\nOs dados foram mal introduzidos, por favor repita!\n\n");
+        if(brd.boats[i].type=='C'){
+        contratorpedeiros++;
     }
-    else if(a==0 && brd.boats[i].type=='C'){
-        contratorpedeiros--;
-    }
-    else if(brd.boats[i].type=='P'){
+        else if(brd.boats[i].type=='P'){
 
-        portavioes--;
-
-    }
-    else if(a==0 && brd.boats[i].type=='S'){
-
-        submarinos--;
+        portavioes++;
 
     }
-    else if(a==0 && brd.boats[i].type=='N'){
+        else if(brd.boats[i].type=='S'){
 
-        naviotanque--;
+        submarinos++;
 
     }
+    else if(brd.boats[i].type=='N'){
 
-    }while(a!=0);
+        naviotanque++;
+
+    }
+    }
+    printf(" ______________________________________________________________________\n");
+    printf("|                                                                      |\n");
+    printf("|  %d-Submarinos %d-Contratorpedeiros %d-Navio-tanque %d-Porta-Aviões      |\n", submarinos, contratorpedeiros, naviotanque,portavioes);
+    printf("|______________________________________________________________________|\n");
+
+    }while(a!=0 && quit=='0');
 
     
     print_board(N, M, brd.board, 1);
     init_board(N, M, &jogo);
 
     }
+    if(quit=='0'){
     puts( "\x1b[2J\x1b[1;1H");
     printf("\n Já adicionou todos os barcos correctamente! Agora o adversário irá tentar afundá-los!\n");
     print_board(N, M, jogo.board, 1);
     do{
         do{
-    printf("\nIndique as coordenadas a atacar:\n");
+    printf("\nIndique as coordenadas a atacar. Caso queira desistir, escreva -1:\n");
     printf("Tem %d restantes \n", 40-jogadas);
     scanf("%d", &x);
+    if(x==-1){
+        printf("Quer recomeçar o jogo? S(sim) ou N(não):\n");
+        scanf(" %c", &rein);
+        if(rein=='S')goto repeat;
+        else goto sair;
+    }
     scanf("%d", &y);
     ataque=target(x,y, &brd);
     if (ataque==-2){
-        printf("Coordenada inválida! Repita pfv:\n");
+        printf(" ____________________________\n");
+        printf("|                            |\n");
+        printf("|     COORDENADA INVÁLIDA    |\n");
+        printf("|____________________________|\n");
+        print_board(N, M, jogo.board, 1);
     }
     else if(jogo.board[x][y]!=' '){
-        printf("Esta coordenada já foi atacada!\n");
+        printf(" ____________________________\n");
+        printf("|                            |\n");
+        printf("|       JÁ FOI ATACADO       |\n");
+        printf("|____________________________|\n");
+        print_board(N, M, jogo.board, 1);
     }
     
     }while( (ataque==-2 || (ataque==0 || jogo.board[x][y]!=' ')));
         
         if(ataque==-1){
             jogo.board[x][y]='F';
+            printf(" ____________________________\n");
+            printf("|                            |\n");
+            printf("|       NÃO ACERTASTE!       |\n");
+            printf("|____________________________|\n");
         }
         else if(ataque==1){
             jogo.board[x][y]='*';
+            printf(" ____________________________\n");
+            printf("|                            |\n");
+            printf("|    ACERTASTE NUM BARCO!    |\n");
+            printf("|____________________________|\n");
         }
         else{
             for(int i=0; i<B; i++){
@@ -628,7 +714,26 @@ int main(void)
             if(brd.boats[i].coord[j].pos.x==x && brd.boats[i].coord[j].pos.y==y){
                     for(int k=0; k<typeToSize(brd.boats[i].type); k++){
                         jogo.board[brd.boats[i].coord[k].pos.x][brd.boats[i].coord[k].pos.y]='A';
+                        
+                        
+
                     }
+                    printf(" ____________________________\n");
+                    printf("|                            |\n");
+                    printf("|    AFUNDASTE  UM BARCO!    |\n");
+                    printf("|____________________________|\n");
+                    if(brd.boats[i].type=='S'){
+                            submarinos++;
+                        }
+                        else if(brd.boats[i].type=='N'){
+                            naviotanque++;
+                        }
+                        else if(brd.boats[i].type=='P'){
+                            portavioes++;
+                        }
+                        else if(brd.boats[i].type=='C'){
+                            contratorpedeiros++;
+                        }
                     }
                
                     
@@ -639,37 +744,42 @@ int main(void)
 
     
     print_board(N, M, jogo.board, 1);
+    printf(" ______________________________________________________________________\n");
+    printf("|                                                                      |\n");
+    printf("|  NAVIOS POR AFUNDAR:                                                 |\n");
+    printf("|                                                                      |\n");
+    printf("|  %d-Submarinos %d-Contratorpedeiros %d-Navio-tanque %d-Porta-Aviões      |\n", 2-submarinos, 2-contratorpedeiros, 1-naviotanque, 1-portavioes);
+    printf("|______________________________________________________________________|\n");
+
+
     if(brd.numBoatsAfloat==0){
         jogadas=40;
     }
-    printf("%d\n", brd.numBoatsAfloat);
 
     jogadas++;
+
     }while(jogadas<40);
     if(brd.numBoatsAfloat==0){
-        printf("\nO jogador 2 vence!\n");
+        printf("\n%s vence!\n", player2);
+        score2++;
+        printf("O resultado é %d-%d em favor do(a) %s \n", score1, score2, player2);
     }
     else{
-        printf("\n O jogador 1 vence!\n");
+        printf("\n%s vence!\n", player1);
+        score1++;
+        printf("O resultado é %d-%d em favor do(a) %s \n", score1, score2, player1);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
+    }
+    printf("Quer jogar mais uma ronda? Sim (S) ou N(não):\n");
+    scanf(" %c", &ngame);
+    }while(ngame=='S');
+    
+    sair:
+    printf("Adeus!\n");
+    
+
+
+
     return 0;
 }
