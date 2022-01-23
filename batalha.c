@@ -695,7 +695,7 @@ int main(void)
     }
     
     do{
-    printf("\n-----------------------------------------------------------------------------------------------------\n\n");
+    printf("\n");
     printf("Prima 1 para orientação Horizontal e 0 para orientação vertical:\t");
     printf("\nPara abortar o jogo imprime -1 a qualquer momento\n\n");
 
@@ -777,6 +777,7 @@ int main(void)
     }
     else if(x==-2){ //se for pedido o tabuleiro, então o jogador atacante perde, mas jogo continua
         printf("%s perdeste :(\n", player2);
+        printf("Mas podes continuar a jogar.\n");
         cheat++; //flag cheat incrementa
         print_board(N, M, brd.board, 1);
         printf("x: ");
@@ -790,10 +791,12 @@ int main(void)
     }
     else if(y==-2){
         printf("%s perdeste :(\n", player2);
+        printf("Mas podes continuar a jogar.\n");
         cheat++;
         print_board(N, M, brd.board, 1);
     }
-    
+
+    printf("\n-----------------------------------------------------------------------------------------------------\n\n");
     ataque=target(x,y, &brd);
     if (ataque==-2){
         printf(" ____________________________\n");
