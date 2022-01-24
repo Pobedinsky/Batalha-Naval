@@ -1,6 +1,8 @@
 # Battleship Game [PROG-2021/2022]
 
 This project is a university work and is an assessment element for the programming discipline. The program consists of a simple naval battle game, in which a player has to sink his opponent's ships to win, otherwise he loses.
+
+
 ![GitHub last commit](https://img.shields.io/github/last-commit/Pobedinsky/Batalha-Naval)
 
 ## Installation
