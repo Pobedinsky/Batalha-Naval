@@ -6,22 +6,28 @@ main_execute = main.exe
 
 all: execute
 execute : main.exe
-	./main.exe
+        ./main.exe
 
 main.exe : $(OBJECTS)
-	$(compilador) -o $@ $^ 
+        $(compilador) -o $@ $^
 
 %.o : %.c
-	$(compilador) -c $<
+        $(compilador) -c $<
 
-perfilagem: $(OBJECTS)
-	$(compilador) -o $@ $^ -pg
-	./main.exe
-	gprof main.exe gmon.out 
-	cat gmon.out
+perfilagem: gmon.out
+        cat gmon.out > profile.txt
+        rm gmon.out
+
+gmon.out: $(OBJECTS)
+        $(compilador) -o main.exe $^ -pg
+        ./main.exe
+        gprof main.exe gmon.out
+        rm main.exe
+
 test: $(OBJECTS)
-	gcc -o demo batalha.c -Wall -std=c99
-	rm demo
+        gcc -o demo batalha.c -Wall -std=c99
+        rm demo
 
 clean :
-	rm *.o
+        rm *.o
+
