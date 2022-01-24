@@ -1,10 +1,3 @@
-/**
- * @autores:
- * Nome: Artur Putyato      Número de Aluno: 47948
- * Nome: Alexandre Nunes    Número de Aluno: 48267
- * Nome: David Quadrado     Número de Aluno: 48188
- **/ 
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
