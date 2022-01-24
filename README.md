@@ -7,7 +7,7 @@ This project is a university work and is an assessment element for the programmi
 
 
 ```
-$ git clone git@github.com:/ArturPutyato/Batalha-Naval.git
+$ git clone git@github.com:/Pobedinsky/Batalha-Naval
 $ cd Batalha-Naval
 $ make 
 ```
