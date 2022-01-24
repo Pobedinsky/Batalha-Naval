@@ -7,6 +7,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
 
 
 #define B 6  //número de barcos
@@ -752,7 +754,8 @@ int main(void)
 
     }
 
-    
+    system("clear");
+
     printf("\n%s já adicionou todos os barcos correctamente! Agora o %s irá tentar afundá-los!\n\n", player1, player2); 
     printf(" ___________________________________________________\n");
     printf("|                                                   |\n");
